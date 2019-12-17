@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Varshini Expense App</title>
+    <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+    crossorigin="anonymous"
+   />
+   <script
+			defer
+			src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+			integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
+			crossorigin="anonymous">
+    </script>
+    <style>
+      .avatar {
+    display: inline-block;
+    overflow: hidden;
+    line-height: 1;
+    vertical-align: middle;
+    border-radius: 50%;
+    height:40px;
+    width: 40px;
+    font-weight: 600;
+    color: #fff;
+}
+
+    </style>
+</head>
+<body>
+        <nav class="navbar navbar-light bg-secondary">
+                <span class="navbar-brand mb-0 h1 text-white font-italic">Paperless</span>
+                <span class="navbar-brand mb-0 h1"></span>
+                <div>
+                <img class="avatar" src="IMG-20190803-WA0015.jpg" data-toggle="tooltip" data-placement="bottom" title="Hi Varshini" aria-describedby="profile pic">
+                </div>             
+            </nav>
+        <div class="container-fluid bg-dark" style="min-height: 100vh">
+
+            <br/><h3 class="font-italic text-center text-secondary">Welcome to <span class="text-danger font-italic">PaperLess !!</span></h3>
+            <blockquote class="text-center">
+            <footer class="blockquote-footer text-white">Let's forget taking notes</footer>
+            </blockquote>
+        <div class="container">
+                <div class="jumbotron mt-4">
+                        <div class="input-group mb-3">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Amount spent"
+                                id="amount"
+                                required="required"
+                                autofocus
+                                aria-label="Amount spent"
+                                aria-describedby="spent in rupee"
+                            />
+                            <div class="input-group-append">
+                                <span class="input-group-text" id="spent in rupee">₹</span>
+                            </div>                   
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="spent at">@</span>
+                            </div>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="desc"
+                                required
+                                placeholder="spent On"
+                                aria-label="spent On"
+                                aria-describedby="spent at"
+                            />
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="add">Add</button>
+                            </div>
+                        </div>
+                        <div> 
+                        <p class="float-left font-weight-bold" id="output">Total Expense : 0</p>
+                        </div>
+                        <div>
+                        <button type="button" class="btn btn-danger btn-sm float-right" onclick="DeleteAllExpenses()">Delete All</button>
+                        </div>
+                        <div>
+                            <p class="text-danger float-right" id="allDelete"></p>
+                        </div>
+                        
+                </div>
+                <div>
+                    <ul class="list-group" id="listitems">
+                    </ul>
+                </div>
+        </div>   
+        </div>
+    <script> 
+    let arrayExpense=[];
+    let totalExpense=0;
+    const descElement=document.querySelector("#desc");
+    const amountElement=document.querySelector("#amount");
+    const outputElement=document.querySelector("#output")
+    const listElement=document.querySelector("#listitems");
+    const buttonElement=document.querySelector("#add");
+    buttonElement.addEventListener("click",addExpense,false);
+    function addExpense()
+    {
+    var now=new Date();
+    const expenseItem={};
+    const descAmount=descElement.value;
+    const Amount=amountElement.value;
+    const intAmount=parseInt(Amount,10);
+    expenseItem.desc=descAmount;
+    expenseItem.amount=intAmount;
+    expenseItem.moment=now;  
+    IncExpTotal(intAmount);
+    arrayExpense.push(expenseItem);
+    DisplayExpense(arrayExpense);
+    console.log(arrayExpense);
+    descElement.value="";
+    amountElement.value="";
+    amountElement.focus();
+    }
+    function renderList({desc,amount,moment})
+    {
+        return `<li class="list-group-item d-flex justify-content-between">
+							<div class="d-flex flex-column">
+                                    ${desc}
+								<small class="text-muted">${moment.toLocaleDateString('en-US',{year: 'numeric', month: 'long', day: 'numeric' })}</small>
+							</div>
+							<div>
+								<span class="px-5">
+                                    ${amount}
+								</span>
+                                <button type="button" class="btn btn-outline-dark btn-sm" onclick="#">
+                                    <i class="far fa-edit"></i>
+                                </button>                     
+								<button type="button" class="btn btn-outline-danger btn-sm" onclick="DeleteExpense(${moment.valueOf()},${amount})">
+                                    <i class="fas fa-trash-alt"></i>
+								</button>
+							</div>
+		</li>`
+    }
+    function DeleteExpense(moment,amount){
+        const arrayDifftotalExpense=arrayExpense.filter(expense=>expense.moment.valueOf()!==moment);
+        DisplayExpense(arrayDifftotalExpense);
+        amountElement.focus();
+        arrayExpense=arrayDifftotalExpense;
+        DecExpTotal(amount);
+
+    }
+    function DisplayExpense(arraytotalExpense){
+        const arrayExpenseHTML=arraytotalExpense.map(expense =>renderList(expense)).join('');
+        listElement.innerHTML=arrayExpenseHTML; 
+    }
+    function IncExpTotal(amount)
+    {
+        totalExpense=totalExpense+amount;     
+        outputElement.textContent=`Total Expense : ${totalExpense}`;
+    }
+    function DecExpTotal(amount)
+    {
+        var x=amount!=0?totalExpense=totalExpense-amount:totalExpense=amount;
+        outputElement.textContent=`Total Expense : ${totalExpense}`;
+    }
+    function touch()
+    {
+    const amountElement=document.querySelector("#amount");
+    const Amount=amountElement.value;
+    const intAmount=parseInt(Amount,10);
+    if(intAmount<=0)
+    {
+        //console.log("True");
+        amountElement.setCustomValidity("Please select Expense greater than 0");
+    }
+    }
+    function DeleteAllExpenses()
+    {
+        arrayExpense=[];
+        DisplayExpense(arrayExpense);
+        DecExpTotal(0);
+        allDelete.innerHTML=`All Expenses are deleted`;  
+        amountElement.focus();
+    }
+    function EditExpense(desc,amount){
+        console.log("Called"+desc+amount);
+        //const findHTML=arrayExpense.filter(expense=>expense.moment.valueOf()==moment);
+        //console.log(findHTML);
+    }
+    
+    </script>
+</body>
+</html>
