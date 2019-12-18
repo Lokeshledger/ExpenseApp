@@ -88,6 +88,7 @@
                 <div>
                     <p class="text-danger float-right" id="allDelete"></p>
                 </div>
+                </br>>
                 <div>
                     <ul class="list-group" id="listitems">
                     </ul>
@@ -114,7 +115,7 @@
     let flag=checkAmount();
     if(flag==0)
     {
-        allDelete.innerHTML=`Invalid Expense Amount`; 
+        allDelete.innerHTML=`<h6><span class="text-danger font-italic">Invalid Expense Amount</span></h6>`; 
     }
     else
     {
