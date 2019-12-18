@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Varshini Expense App</title>
+    <title>Expense App</title>
     <link
     rel="stylesheet"
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-    crossorigin="anonymous"
-   />
+    crossorigin="anonymous"/>
    <script
-			defer
-			src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
-			integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
-			crossorigin="anonymous">
+	defer
+	src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
+    integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
+	crossorigin="anonymous">
     </script>
     <style>
-      .avatar {
+    .avatar {
     display: inline-block;
     overflow: hidden;
     line-height: 1;
@@ -28,11 +27,10 @@
     width: 40px;
     font-weight: 600;
     color: #fff;
-}
-
+    }
     </style>
-</head>
-<body>
+    </head>
+    <body>
         <nav class="navbar navbar-light bg-secondary">
                 <span class="navbar-brand mb-0 h1 text-white font-italic">Paperless</span>
                 <span class="navbar-brand mb-0 h1"></span>
@@ -46,7 +44,7 @@
             <blockquote class="text-center">
             <footer class="blockquote-footer text-white">Let's forget taking notes</footer>
             </blockquote>
-        <div class="container">
+        <div class="container-fluid">
                 <div class="jumbotron mt-4">
                         <div class="input-group mb-3">
                             <input
@@ -81,15 +79,14 @@
                             </div>
                         </div>
                         <div> 
-                        <p class="float-left font-weight-bold" id="output">Total Expense : 0</p>
+                        <p class="float-left font-italic font-weight-bold text-secondary" id="output">Total Expense : 0</p>
                         </div>
                         <div>
                         <button type="button" class="btn btn-danger btn-sm float-right" onclick="DeleteAllExpenses()">Delete All</button>
-                        </div>
-                        <div>
-                            <p class="text-danger float-right" id="allDelete"></p>
-                        </div>
-                        
+                        </div>                     
+                </div>
+                <div>
+                    <p class="text-danger float-right" id="allDelete"></p>
                 </div>
                 <div>
                     <ul class="list-group" id="listitems">
@@ -108,21 +105,30 @@
     buttonElement.addEventListener("click",addExpense,false);
     function addExpense()
     {
+    allDelete.innerHTML=``; 
     var now=new Date();
     const expenseItem={};
     const descAmount=descElement.value;
     const Amount=amountElement.value;
     const intAmount=parseInt(Amount,10);
+    let flag=checkAmount();
+    if(flag==0)
+    {
+        allDelete.innerHTML=`Invalid Expense Amount`; 
+    }
+    else
+    {
     expenseItem.desc=descAmount;
     expenseItem.amount=intAmount;
     expenseItem.moment=now;  
     IncExpTotal(intAmount);
     arrayExpense.push(expenseItem);
     DisplayExpense(arrayExpense);
-    console.log(arrayExpense);
+    expenseLength=arrayExpense.length;
     descElement.value="";
     amountElement.value="";
     amountElement.focus();
+    }
     }
     function renderList({desc,amount,moment})
     {
@@ -135,7 +141,7 @@
 								<span class="px-5">
                                     ${amount}
 								</span>
-                                <button type="button" class="btn btn-outline-dark btn-sm" onclick="#">
+                                <button type="button" class="btn btn-outline-dark btn-sm" onclick="EditExpense(${moment.valueOf()},${amount})">
                                     <i class="far fa-edit"></i>
                                 </button>                     
 								<button type="button" class="btn btn-outline-danger btn-sm" onclick="DeleteExpense(${moment.valueOf()},${amount})">
@@ -166,27 +172,33 @@
         var x=amount!=0?totalExpense=totalExpense-amount:totalExpense=amount;
         outputElement.textContent=`Total Expense : ${totalExpense}`;
     }
-    function touch()
+    function checkAmount()
     {
     const amountElement=document.querySelector("#amount");
     const Amount=amountElement.value;
     const intAmount=parseInt(Amount,10);
-    if(intAmount<=0)
-    {
-        //console.log("True");
-        amountElement.setCustomValidity("Please select Expense greater than 0");
+    if(intAmount<=0||isNaN(intAmount))
+    {   return 0;
+        amountElement.setCustomValidity("Invalid Expense Amount");
     }
     }
     function DeleteAllExpenses()
-    {
+    {      
+        if(arrayExpense.length!=0)
+        {
         arrayExpense=[];
         DisplayExpense(arrayExpense);
         DecExpTotal(0);
-        allDelete.innerHTML=`All Expenses are deleted`;  
+        allDelete.innerHTML=`<h6><span class="text-danger font-italic">All Expenses are Deleted</span></h6>`;  
+        }
+        else
+        {
+        allDelete.innerHTML=`<h6><span class="text-danger font-italic">No Expense to Delete</span></h6>`;  
+        }    
         amountElement.focus();
     }
-    function EditExpense(desc,amount){
-        console.log("Called"+desc+amount);
+    function EditExpense(moment,amount){
+        console.log("Called"+moment+amount);
         //const findHTML=arrayExpense.filter(expense=>expense.moment.valueOf()==moment);
         //console.log(findHTML);
     }
